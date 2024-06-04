@@ -1,0 +1,109 @@
+%test.tex
+\documentclass{article}
+\usepackage{CJKutf8}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage[colorlinks,linkcolor=red]{hyperref}
+\begin{CJK}{UTF8}{gbsn}
+\title{shiqing}
+\usepackage{listings}
+\usepackage{color}
+
+\begin{document}
+\maketitle
+
+
+
+
+\begin{table}[t]
+	\centering
+	\resizebox{\linewidth}{!}{
+		
+		\begin{tabular}{ |p{3cm}|p{3cm}|p{3cm}|  }
+			\hline
+			ood dataset& auroc & aupr \\
+			\hline
+			svhn & 0.9188 & 0.8935 \\
+			lsun &   0.9369 & 0.9531 \\
+			cifar100 & 0.8871 & 0.8967 \\
+			mnist   & \textbf{0.9213} &\textbf{ 0.9389} \\
+			tiny-imagenet & 0.8874 & 0.8946 \\
+			\hline
+			
+			svhn+grad&\textbf{ 0.9491} & \textbf{0.9268}\\
+			lsun+grad & \textbf{ 0.9430} & \textbf{0.9582} \\
+			cifar100+grad& \textbf{ 0.8884} & \textbf{0.9086}\\
+			mnist+grad  &  0.8908 & 0.928\\
+			tiny-imagenet+grad& \textbf{ 0.8874} & \textbf{0.9003}\\
+			\hline
+		\end{tabular}
+	}
+	\caption{
+		vgg16+cafar10,accuracy=0.9402, input grad
+	}
+\end{table}
+
+
+\begin{table}[t]
+	\centering
+	\resizebox{\linewidth}{!}{
+		
+		\begin{tabular}{ |p{3cm}|p{3cm}|p{3cm}|  }
+			\hline
+			ood dataset& auroc & aupr \\
+			\hline
+			without noise & 0.9210 & 0.9434 \\
+			 noise(fgsm)&  \textbf{ 0.9613} & \textbf{0.9710} \\
+			noise(bim) & 0.9613 & 0.9710 \\
+			noise(pgd)   & 0.9594 &0.9705 \\
+			\hline
+		\end{tabular}
+	}
+	\caption{
+		vgg16+cafar10,ood:svhn,epsilon=0.001
+	}
+\end{table}
+
+
+
+\begin{table}[t]
+	\centering
+	\resizebox{\linewidth}{!}{
+
+\begin{tabular}{ |p{3cm}|p{3cm}|p{3cm}|  }
+	\hline
+	ood dataset& auroc & aupr \\
+	\hline
+	svhn & 0.9107 & 0.8645 \\
+	lsun &   0.9057 & 0.9244 \\
+	cifar100 & 0.8690 & 0.8836 \\
+	mnist   & 0.9260 & 0.9473 \\
+	tiny-imagenet & 0.8563 & 0.8927 \\
+	\hline
+	
+	svhn+grad&\textbf{ 0.9639} & \textbf{0.9402}\\
+	lsun+grad & \textbf{ 0.9440} & \textbf{0.9561} \\
+	cifar100+grad& \textbf{ 0.8869} & \textbf{0.9019}\\
+	mnist+grad  & \textbf{ 0.9474} & \textbf{0.9641}\\
+	tiny-imagenet+grad& \textbf{ 0.8842} & \textbf{0.8927}\\
+	\hline
+\end{tabular}
+	}
+	\caption{
+		resnet50+cafar10,accuracy=0.9461,input grad
+	}
+\end{table}
+
+$\tilde{x}=x+\epsilon \cdot sign(-\nabla_x \log p(x;D))$
+
+
+$\tilde{x}=x-\epsilon \cdot sign(-\nabla_x \log p(x;D))$
+
+
+
+\end{CJK}
+\end{document}
