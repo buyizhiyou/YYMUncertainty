@@ -1,5 +1,6 @@
 %test.tex
 \documentclass{article}
+%\usepackage[UTF8]{ctex}
 \usepackage{CJKutf8}
 \usepackage{amsmath}
 \usepackage{graphicx}
@@ -8,7 +9,7 @@
 \usepackage{graphicx}
 \usepackage{multirow}
 \usepackage[colorlinks,linkcolor=red]{hyperref}
-\begin{CJK}{UTF8}{gbsn}
+\begin{CJK*}{UTF8}{gbsn}
 \title{shiqing}
 \usepackage{listings}
 \usepackage{color}
@@ -27,23 +28,23 @@
 			\hline
 			ood dataset& auroc & aupr \\
 			\hline
-			svhn & 0.9188 & 0.8935 \\
-			lsun &   0.9369 & 0.9531 \\
+			svhn & 0.9214 & 0.9434 \\
+			lsun &   0.9376 & 0.9538 \\
 			cifar100 & 0.8871 & 0.8967 \\
-			mnist   & \textbf{0.9213} &\textbf{ 0.9389} \\
-			tiny-imagenet & 0.8874 & 0.8946 \\
+			mnist   & 0.9213 & 0.9389 \\
+			tiny-imagenet & 0.9304 & 0.9527 \\
 			\hline
 			
-			svhn+grad&\textbf{ 0.9491} & \textbf{0.9268}\\
-			lsun+grad & \textbf{ 0.9430} & \textbf{0.9582} \\
-			cifar100+grad& \textbf{ 0.8884} & \textbf{0.9086}\\
-			mnist+grad  &  0.8908 & 0.928\\
-			tiny-imagenet+grad& \textbf{ 0.8874} & \textbf{0.9003}\\
+			svhn+noise&\textbf{ 0.9902} & \textbf{0.9924}\\
+			lsun+noise & \textbf{ 0.9979} & \textbf{0.9983} \\
+			cifar100+noise& \textbf{ 0.9405} & \textbf{0.9564}\\
+			mnist+noise  &  \textbf{0.9240} & \textbf{0.9406}\\
+			tiny-imagenet+noise& \textbf{ 0.9380} & \textbf{0.9527}\\
 			\hline
 		\end{tabular}
 	}
 	\caption{
-		vgg16+cafar10,accuracy=0.9402, input grad
+		vgg16+cafar10,accuracy=0.9405
 	}
 \end{table}
 
@@ -98,12 +99,24 @@
 	}
 \end{table}
 
-$\tilde{x}=x+\epsilon \cdot sign(-\nabla_x \log p(x;D))$
 
 
+$$\tilde{x}=x+\epsilon*\exp(\lambda*\max\left\{(norm-threshold),0\right\}) \cdot sign(-\nabla_x \log p(x;D))$$
+\\
+$threshold:$在训练集上统计得到所有关于输入的梯度的范数，计算分位数得到\\
+\\
+通过gridSearch得到超参数:$\epsilon=0.01,\lambda=50$
+
+
+
+$
+\\
+\\
+\\
+$
 $\tilde{x}=x-\epsilon \cdot sign(-\nabla_x \log p(x;D))$
 
 
 
-\end{CJK}
+\end{CJK*}
 \end{document}
