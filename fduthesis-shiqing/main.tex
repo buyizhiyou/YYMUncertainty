@@ -1,0 +1,339 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2018--2023 by Xiangdong Zeng <xdzeng96@gmail.com>
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3c of this license or (at your option) any later
+% version. The latest version of this license is in:
+%
+%   http://www.latex-project.org/lppl.txt
+%
+% and version 1.3 or later is part of all distributions of
+% LaTeX version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Xiangdong Zeng.
+%
+% \fi
+
+%*********************************************************************
+% fduthesis: 复旦大学论文模板
+% 2023-05-27 v0.9a
+%
+% 重要提示：
+%   1. 请确保使用 UTF-8 编码保存
+%   2. 请使用 XeLaTeX 或 LuaLaTeX 编译
+%   3. 请仔细阅读用户文档
+%   4. 修改、使用、发布本文档请务必遵循 LaTeX Project Public License
+%   5. 不需要的注释可以尽情删除
+%*********************************************************************
+
+\documentclass[type=master]{fduthesis}
+% 模板选项：
+%   type = doctor|master|bachelor  论文类型，默认为本科论文
+%   oneside|twoside                论文的单双面模式，默认为 twoside
+%   draft = true|false             是否开启草稿模式，默认关闭
+% 带选项的用法示例：
+%   \documentclass[oneside]{fduthesis}
+%   \documentclass[twoside, draft=true]{fduthesis}
+%   \documentclass[type=bachelor, twoside, draft=true]{fduthesis}
+
+\fdusetup{
+  % 参数设置
+  % 允许采用两种方式设置选项：
+  %   1. style/... = ...
+  %   2. style = { ... = ... }
+  % 注意事项：
+  %   1. 不要出现空行
+  %   2. “=” 两侧的空格会被忽略
+  %   3. “/” 两侧的空格不会被忽略
+  %   4. 请使用英文逗号 “,” 分隔选项
+  %
+  % style 类用于设置论文格式
+  style = {
+    % font = times,
+    % 西文字体（包括数学字体）
+    % 允许选项：
+    %   font = garamond|libertinus|lm|palatino|times|times*|none
+    %
+    % cjk-font = fandol,
+    % 中文字体
+    % 允许选项：
+    %   cjk-font = adobe|fandol|founder|mac|sinotype|sourcehan|windows|none
+    %
+    % 注意：
+    %   1. 中文字体设置高度依赖于系统。各系统建议方案：
+    %        windows：cjk-font = windows
+    %        mac：    cjk-font = mac
+    %        linux：  cjk-font = fandol（默认值）
+    %   2. 除 fandol 和 sourcehan 外，其余字体均为商用字体，请注意版权问题
+    %   3. 但 fandol 字体缺字比较严重，而 sourcehan 没有配备楷体和仿宋体
+    %   4. 这里中西文字体设置均注释掉了，即使用默认设置：
+    %        font     = times
+    %        cjk-font = fandol
+    %   5. 使用 font = none / cjk-font = none 关闭默认字体设置，需手动进行配置
+    %
+    % font-size = -4,
+    % 字号
+    % 允许选项：
+    %   font-size = -4|5
+    %
+    % fullwidth-stop = catcode,
+    % 是否把全角实心句点 “．” 作为默认的句号形状
+    % 允许选项：
+    %   fullwidth-stop = catcode|mapping|false
+    % 说明：
+    %   catcode   显式的 “。” 会被替换为 “．”（e.g. 不包括用宏定义保存的 “。”）
+    %   mapping   所有的 “。” 会被替换为 “．”（使用 LuaLaTeX 编译则无效）
+    %   false     不进行替换
+    %
+    footnote-style = xits,
+    % 脚注编号样式
+    % 允许选项：
+    %   footnote-style = plain|libertinus|libertinus*|libertinus-sans|
+    %                    pifont|pifont*|pifont-sans|pifont-sans*|
+    %                    xits|xits-sans|xits-sans*
+    % 默认与西文字体保持一致
+    %
+    % hyperlink = color,
+    % 超链接样式
+    % 允许选项：
+    %   hyperlink = border|color|none
+    %
+    % hyperlink-color = default,
+    % 超链接颜色
+    % 允许选项：
+    %   hyperlink-color = default|classic|material|graylevel|prl
+    %
+    bib-backend = bibtex,
+    % 参考文献支持方式
+    % 允许选项：
+    %   bib-backend = bibtex|biblatex
+    %
+    % bib-style = numerical,
+    % 参考文献样式
+    % 允许选项：
+    %   bib-style = author-year|numerical|<其他样式>
+    % 说明：
+    %   author-year  著者—出版年制
+    %   numerical    顺序编码制
+    %   <其他样式>   使用其他 .bst（bibtex）或 .bbx（biblatex）格式文件
+    %
+    % cite-style = {},
+    % 引用样式
+    % 默认为空，即与参考文献样式保持一致
+    % 仅适用于 biblatex；如要填写，需保证相应的 .cbx 格式文件能被调用
+    %
+    bib-resource = {main.bib},
+    % 参考文献数据源
+    % 可以是单个文件，也可以是用英文逗号 “,” 隔开的一组文件
+    % 如果使用 biblatex，则必须明确给出 .bib 后缀名
+    %
+    % logo = {fudan-name.pdf},
+    % 封面中的校名图片
+    % 模版已自带，通常不需要额外配置
+    %
+    % logo-size = {0.5\textwidth},      % 只设置宽度
+    % logo-size = {{}, 3cm},            % 只设置高度
+    % logo-size = {8cm, 3cm},           % 设置宽度和高度
+    % 设置校名图片的大小
+    % 通常不需要调整
+    %
+    % declaration-page = {declaration.pdf},
+    % 插入扫描版的声明页 PDF 文档
+    % 默认使用预定义的声明页，但不带签名
+    %
+    % auto-make-cover = true
+    % 是否自动生成论文封面（封一）、指导小组成员名单（封二）和声明页（封三）
+    % 除非特殊需要（e.g. 不要封面），否则不建议设为 false
+  },
+  %
+  % info 类用于录入论文信息
+  info = {
+    title = {基于高维特征概率密度建模的模型不确定性的研究},
+    % 中文标题
+    % 长标题建议使用 “\\” 命令手动换行（不是指在源文件里输入回车符，当然
+    % 源文件里适当的换行可以有助于代码清晰）：
+    %   title = {最高人民法院、最高人民检察院关于适用\\
+    %            犯罪嫌疑人、被告人逃匿、死亡案件违法所得\\
+    %            没收程序若干问题的规定},
+    %
+    title* = {Research on Model Uncertainty Based on High-Dimensional Feature Probability Density Modeling},
+    % 英文标题
+    %
+    author = {师清},
+    % 作者姓名
+    %
+    % author* = {Your name},
+    % 作者姓名（英文 / 拼音）
+    % 目前不需要填写
+    %
+    supervisor = {薛向阳\quad 教授},
+    % 导师
+    % 姓名与职称之间可以用 \quad 打印一个空格
+    %
+    major = {计算机技术},
+    % 专业
+    %
+    degree = professional,
+    % 学位类型
+    % 允许选项：
+    %   degree = academic|professional
+    % 说明：
+    %   academic      学术学位
+    %   professional  专业学位
+    %
+    department = {计算机科学与技术},
+    % 院系
+    %
+    student-id = {22210240262},
+    % 作者学号
+    %
+    % date = {2023 年 1 月 1 日},
+    % 日期
+    % 注释掉表示使用编译日期
+    %
+    % secret-level = ii,
+    % 密级
+    % 允许选项：
+    %   secret-level = none|i|ii|iii
+    % 说明：
+    %   none  不显示密级与保密年限
+    %   i     秘密
+    %   ii    机密
+    %   iii   绝密
+    %
+    % secret-year = {五年},
+    % 保密年限
+    % secret-level = none 时该选项无效
+    %
+    instructors = {
+      {薛向阳 \quad 教授},
+      {戈维峰     \quad 青年副研究员}
+    },
+    % 指导小组成员
+    % 使用英文逗号 “,” 分隔
+    % 如有需要，可以用 \quad 手工对齐
+    %
+    keywords = {模型不确定性；高斯混合模型；梯度空间；输入扰动；特征空间；辅助损失函数},
+    % 中文关键词
+    % 使用英文逗号 “,” 分隔
+    %
+    keywords* = {Model Uncertainty; Gaussian Mixed Model;Gradient Space;Input perturbation；Feature Space;Auxiliary Loss Function},
+    % 英文关键词
+    % 使用英文逗号 “,” 分隔
+    %
+    % clc = {O413.1},
+    % 中图分类号
+    %
+    % jel = {C02},
+    % JEL 分类号，仅适用于经济学院等部分院系
+  }
+}
+
+% 需要的宏包可以自行调用
+\usepackage{physics}
+\usepackage{algorithm}
+%\usepackage{algorithmic}
+%\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{multirow}
+\usepackage{makecell} % 使用 makecell 包
+\usepackage{array}    % 用于表格的灵活控制
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+% 需要的命令可以自行定义
+\newcommand{\hilbertH}{\symcal{H}}
+\newcommand{\ee}{\symrm{e}}
+\newcommand{\ii}{\symrm{i}}
+
+\begin{document}
+
+% 这个命令用来关闭版心底部强制对齐，可以减少不必要的 underfull \vbox 提示，但会影响排版效果
+% \raggedbottom
+
+% 前置部分包含目录、中英文摘要以及符号表等
+\frontmatter
+
+% 目录
+\tableofcontents
+% 插图目录
+\listoffigures
+% 表格目录
+\listoftables
+
+\begin{abstract}
+近年来，深度学习在许多领域都有着广泛的应用，算法的准确率也在不断提高。但是在一些安全敏感的领域，如自动驾驶、医疗图像识别，即使模型以很低的概率预测错误，仍然会给应用带来严重的后果，极大限制了深度学习算法在这些领域的应用。于是就兴起了对神经网络不确定性的研究，神经网络的不确定性表示了神经网络对本次预测结果的信心，如果神经网络不确定性高，说明本次预测可靠程度低，通过选取一个阈值，对于不确定性高于某个阈值的预测，引入人类的判断，来降低线上系统事故发生的可能性。
+
+对神经网络的建模有不同的思路，如贝叶斯神经网络(bnn),模型集成(Ensemble)的方法。本文采用的单一确定性神经网络建模不确定性的思路，通过对神经网络抽取的高维特征进行概率密度建模，并使用对数概率密度表示神经网络预测的模型不确定性。这种思路在DDU算法\cite{Mukhoti_2023_CVPR}中已经有了很好的效果，但是实验观察到相对于ensemble类的思路，DDU算法仍有差距，于是本文提出两点改进，提高了这一建模思路的效果。
+
+首先是基于梯度空间的分析，对输入图片加上与梯度相关的扰动。通过可视化loss关于输入图片的梯度响应，观察到域内样本和域外样本存在明显的差异，域外样本的梯度较大，域内样本的梯度较小。对输入图片加入与梯度相关的输入扰动， 再用重新计算出的对数概率密度表示模型不确定性，通过在OOD检测任务，对抗样本检测任务上的实验，观察到方法对于模型不确定性建模的提升。
+
+第二点改进是使用TSNE对高维特征降维到二维空间，然后对高维特征进行可视化分析，在此基础上本文指出通过提高特征空间的类内紧密性和类间可分性，可以进一步提高高维特征概率密度建模不确定性的效果，为了达到提高特征空间的类内紧密性和类间可分性这一目的，本文实验了几种辅助损失函数，和交叉熵损失函数一起联合训练神经网络模型，最终提出使用FeatureLoss,
+
+总之，本文提出两个方法，改进了高维特征概率密度建模不确定性的效果，推进了深度学习算法在某些安全敏感领域的应用。
+\end{abstract}
+
+\begin{abstract*}
+In recent years, deep learning has found extensive applications across various fields, achieving continually improving accuracy in its algorithms. However, in safety-critical domains such as autonomous driving and medical image recognition, even low-probability prediction errors can result in severe consequences, significantly limiting the application of deep learning algorithms in these areas. This challenge has led to a growing interest in studying the uncertainty of neural networks. Neural network uncertainty quantifies the confidence a network has in its predictions. High uncertainty implies low reliability of a prediction, and by setting a threshold, predictions with uncertainty above this threshold can be flagged for human review, thereby reducing the risk of accidents in online systems.
+
+There are various approaches to modeling neural network uncertainty, such as Bayesian Neural Networks (BNNs) and ensemble methods. This paper adopts an approach based on a single deterministic neural network to model uncertainty. It models the probability density of high-dimensional features extracted by the network and uses the log-probability density to represent the uncertainty of predictions. This approach has demonstrated promising results in the DDU algorithm \cite{Mukhoti_2023_CVPR}, but experiments reveal that it still lags behind ensemble-based methods. To address this gap, this paper proposes two improvements to enhance the effectiveness of this modeling approach.
+
+The first improvement involves gradient-space analysis by introducing gradient-related perturbations to the input images. By visualizing the loss gradient responses concerning the input images, it was observed that there are significant differences between in-domain and out-of-domain samples: the gradients for out-of-domain samples are generally larger, while those for in-domain samples are smaller. By adding gradient-related perturbations to the input images and recalculating the log-probability density to represent model uncertainty, experiments on OOD detection and adversarial sample detection tasks demonstrated improved modeling of model uncertainty.
+
+The second improvement leverages t-SNE to reduce high-dimensional features to a two-dimensional space for visualization. Based on this analysis, the paper highlights that improving intra-class compactness and inter-class separability in the feature space can further enhance the effectiveness of probability density modeling for uncertainty. To achieve this, various auxiliary loss functions were experimented with and combined with the cross-entropy loss function to jointly train the neural network model. Ultimately, the paper proposes the use of FeatureLoss.
+
+In conclusion, this paper introduces two methods to improve the effectiveness of high-dimensional feature probability density modeling for uncertainty, advancing the application of deep learning algorithms in safety-critical domains.
+\end{abstract*}
+
+% 符号表
+% 语法与 LaTeX 表格一致：列用 & 区分，行用 \\ 区分
+% 如需修改格式，可以使用可选参数：
+%   \begin{notation}[ll]
+%     $x$ & 坐标 \\
+%     $p$ & 动量
+%   \end{notation}
+% 可选参数与 LaTeX 标准表格的列格式说明语法一致
+% 这里的 “ll” 表示两列均为自动宽度，并且左对齐
+\begin{notation}[ll]
+  $D$                  & 数据集        \\
+
+\end{notation}
+
+% 主体部分是论文的核心
+\mainmatter
+
+% 建议采用多文件编译的方式
+% 比较好的做法是把每一章放进一个单独的 tex 文件里，并在这里用 \include 导入，例如
+%   \include{chapter1}
+%   \include{chapter2}
+%   \include{chapter3}
+
+\include{chap1}
+\include{chap2}
+\include{chap3}
+\include{chap4}
+\include{chap5}
+
+
+% 附录部分
+\appendix
+一些额外实验
+
+
+\chapter{公式推导}
+一些公式
+
+
+% 后置部分包含参考文献、声明页（自动生成）等
+\backmatter
+
+% 打印参考文献列表
+\printbibliography
+
+\begin{acknowledgements}
+  致谢内容
+\end{acknowledgements}
+
+\end{document}
