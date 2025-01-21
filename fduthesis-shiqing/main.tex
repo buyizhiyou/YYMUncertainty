@@ -30,7 +30,7 @@
 %   5. 不需要的注释可以尽情删除
 %*********************************************************************
 
-\documentclass[type=master]{fduthesis}
+\documentclass[type=master,twoside]{fduthesis}
 % 模板选项：
 %   type = doctor|master|bachelor  论文类型，默认为本科论文
 %   oneside|twoside                论文的单双面模式，默认为 twoside
@@ -221,7 +221,7 @@
     % 中文关键词
     % 使用英文逗号 “,” 分隔
     %
-    keywords* = {Model Uncertainty; Gaussian Mixed Model;Gradient Space;Input perturbation；Feature Space;Auxiliary Loss Function},
+    keywords* = {Model Uncertainty; Gaussian Mixed Model；Gradient Space；Input perturbation；Feature Space；Auxiliary Loss Function},
     % 英文关键词
     % 使用英文逗号 “,” 分隔
     %
@@ -236,10 +236,15 @@
 % 需要的宏包可以自行调用
 \usepackage{physics}
 \usepackage{algorithm}
-%\usepackage{algorithmic}
-%\usepackage{algorithmicx}
 \usepackage{algpseudocode}
 \usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta,shadows}
+\usetikzlibrary{positioning, shapes.geometric}
+\usetikzlibrary{backgrounds}
+\usepackage{float} %
 \usepackage{makecell} % 使用 makecell 包
 \usepackage{array}    % 用于表格的灵活控制
 \newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
@@ -264,27 +269,30 @@
 \listoftables
 
 \begin{abstract}
-近年来，深度学习在许多领域都有着广泛的应用，算法的准确率也在不断提高。但是在一些安全敏感的领域，如自动驾驶、医疗图像识别，即使模型以很低的概率预测错误，仍然会给应用带来严重的后果，极大限制了深度学习算法在这些领域的应用。于是就兴起了对神经网络不确定性的研究，神经网络的不确定性表示了神经网络对本次预测结果的信心，如果神经网络不确定性高，说明本次预测可靠程度低，通过选取一个阈值，对于不确定性高于某个阈值的预测，引入人类的判断，来降低线上系统事故发生的可能性。
 
-对神经网络的建模有不同的思路，如贝叶斯神经网络(bnn),模型集成(Ensemble)的方法。本文采用的单一确定性神经网络建模不确定性的思路，通过对神经网络抽取的高维特征进行概率密度建模，并使用对数概率密度表示神经网络预测的模型不确定性。这种思路在DDU算法\cite{Mukhoti_2023_CVPR}中已经有了很好的效果，但是实验观察到相对于ensemble类的思路，DDU算法仍有差距，于是本文提出两点改进，提高了这一建模思路的效果。
 
-首先是基于梯度空间的分析，对输入图片加上与梯度相关的扰动。通过可视化loss关于输入图片的梯度响应，观察到域内样本和域外样本存在明显的差异，域外样本的梯度较大，域内样本的梯度较小。对输入图片加入与梯度相关的输入扰动， 再用重新计算出的对数概率密度表示模型不确定性，通过在OOD检测任务，对抗样本检测任务上的实验，观察到方法对于模型不确定性建模的提升。
+近年来，深度学习在多个领域展示了广泛的应用，并且其算法的准确性持续提升。然而，在诸如自动驾驶和医疗图像识别等安全敏感领域，即使模型以极低的错误率进行预测，误判仍可能带来严重后果，这限制了深度学习算法在这些领域中的应用。因此，研究神经网络的不确定性成为一项重要任务，不确定性反映了模型对预测结果的信心程度，在系统部署时，对高不确定性的预测结果会引入人类干预，可以提升系统的安全性。
 
-第二点改进是使用TSNE对高维特征降维到二维空间，然后对高维特征进行可视化分析，在此基础上本文指出通过提高特征空间的类内紧密性和类间可分性，可以进一步提高高维特征概率密度建模不确定性的效果，为了达到提高特征空间的类内紧密性和类间可分性这一目的，本文实验了几种辅助损失函数，和交叉熵损失函数一起联合训练神经网络模型，最终提出使用FeatureLoss,
+关于神经网络的不确定性建模的研究当前已经提出多种方法，包括贝叶斯神经网络和模型集成等。本文为了更高效地建模不确定性，采用单一确定性神经网络，通过对训练集中抽取的高维特征进行分布建模来量化不确定性。虽然此方法在模型不确定性建模方面取得了一定效果，但与模型集成方法相比仍有改进空间。本文在已有的不确定性建模算法基础上提出两项改进策略，以提升其效果。
 
-总之，本文提出两个方法，改进了高维特征概率密度建模不确定性的效果，推进了深度学习算法在某些安全敏感领域的应用。
+首先，本文提出基于输入扰动的改进方法。通过可视化分析输入图像的梯度响应图，研究者发现域内和域外样本在梯度响应上存在显著差异，域外样本的响应更大。为了改进不确定性建模，引入了与梯度相关的输入扰动，并利用重新计算的对数概率密度表示模型的不确定性。实验结果表明，这种方法在域外样本检测、误分类样本识别和对抗样本检测等任务中有效提升了模型的不确定性建模能力。
+
+其次，本文提出结合辅助损失函数和交叉熵损失函数联合训练的方法，以获得更具表达能力和区分能力的特征空间。通过对神经网络提取的高维特征进行降维和可视化分析，指出提高特征空间的类内紧密性和类间可分性有助于进一步提升不确定性建模效果。为此，提出了一种新的辅助损失函数，同时优化类内和类间的特征分布。联合训练后的神经网络模型显著提升了特征空间的描述能力。此外，本文通过主成分分析对高维特征进行降维，实验表明，在降维后的特征上进行分布建模不仅可以有效降低存储空间需求，还能进一步提升建模效率和效果。
+
+综上所述，本文基于高维特征概率密度建模的方法对神经网络模型的不确定性进行了深入研究，并在现有算法的基础上提出了基于输入扰动和辅助损失函数联合训练的改进方法。这些改进显著提高了模型在安全敏感领域中的不确定性建模能力，推动了深度学习算法在这些领域的应用。
+
 \end{abstract}
 
 \begin{abstract*}
-In recent years, deep learning has found extensive applications across various fields, achieving continually improving accuracy in its algorithms. However, in safety-critical domains such as autonomous driving and medical image recognition, even low-probability prediction errors can result in severe consequences, significantly limiting the application of deep learning algorithms in these areas. This challenge has led to a growing interest in studying the uncertainty of neural networks. Neural network uncertainty quantifies the confidence a network has in its predictions. High uncertainty implies low reliability of a prediction, and by setting a threshold, predictions with uncertainty above this threshold can be flagged for human review, thereby reducing the risk of accidents in online systems.
+In recent years, deep learning has been widely applied in many fields, with its accuracy continuously improving. However, in safety-critical areas such as autonomous driving and medical image recognition, even predictions with very low error rates can lead to serious consequences if errors occur. This limits the use of deep learning algorithms in these fields. Therefore, studying the uncertainty of neural networks has become an important task. Uncertainty shows how confident a model is in its predictions. During system deployment, predictions with high uncertainty can involve human intervention to improve system safety.
 
-There are various approaches to modeling neural network uncertainty, such as Bayesian Neural Networks (BNNs) and ensemble methods. This paper adopts an approach based on a single deterministic neural network to model uncertainty. It models the probability density of high-dimensional features extracted by the network and uses the log-probability density to represent the uncertainty of predictions. This approach has demonstrated promising results in the DDU algorithm \cite{Mukhoti_2023_CVPR}, but experiments reveal that it still lags behind ensemble-based methods. To address this gap, this paper proposes two improvements to enhance the effectiveness of this modeling approach.
+Many methods have been proposed to model neural network uncertainty, such as Bayesian neural networks and model ensembles. To model uncertainty more efficiently, this paper uses a single deterministic neural network to quantify uncertainty by modeling the distribution of high-dimensional features extracted from the training set. While this method has shown some success, it still has room for improvement compared to model ensemble methods. This paper proposes two strategies to improve existing uncertainty modeling algorithms.
 
-The first improvement involves gradient-space analysis by introducing gradient-related perturbations to the input images. By visualizing the loss gradient responses concerning the input images, it was observed that there are significant differences between in-domain and out-of-domain samples: the gradients for out-of-domain samples are generally larger, while those for in-domain samples are smaller. By adding gradient-related perturbations to the input images and recalculating the log-probability density to represent model uncertainty, experiments on OOD detection and adversarial sample detection tasks demonstrated improved modeling of model uncertainty.
+First, an input perturbation method is introduced. By visualizing the gradient response maps of input images, the study found that in-domain and out-of-domain samples show clear differences. Out-of-domain samples have larger gradient responses. To improve uncertainty modeling, gradient-based input perturbations are added, and the recalculated log-probability density is used to measure uncertainty. Experiments show that this method improves uncertainty modeling in tasks such as out-of-domain detection, misclassification recognition, and adversarial sample detection.
 
-The second improvement leverages t-SNE to reduce high-dimensional features to a two-dimensional space for visualization. Based on this analysis, the paper highlights that improving intra-class compactness and inter-class separability in the feature space can further enhance the effectiveness of probability density modeling for uncertainty. To achieve this, various auxiliary loss functions were experimented with and combined with the cross-entropy loss function to jointly train the neural network model. Ultimately, the paper proposes the use of FeatureLoss.
+Second, this paper introduces a method that combines an auxiliary loss function with the cross-entropy loss function for joint training. This helps create a feature space with better expressiveness and separability. By reducing the dimensions of the high-dimensional features and analyzing them, it is shown that increasing intra-class compactness and inter-class separability improves uncertainty modeling. To achieve this, a new auxiliary loss function is proposed to optimize both intra-class and inter-class distributions. The jointly trained model significantly enhances the feature space. Additionally, this paper uses Principal Component Analysis (PCA) to reduce the feature dimensions. Experiments show that modeling distributions on reduced-dimensional features reduces storage requirements and further improves efficiency and effectiveness.
 
-In conclusion, this paper introduces two methods to improve the effectiveness of high-dimensional feature probability density modeling for uncertainty, advancing the application of deep learning algorithms in safety-critical domains.
+In summary, this paper studies neural network uncertainty based on high-dimensional feature probability density modeling and proposes two improvements: input perturbation and joint training with an auxiliary loss function. These improvements significantly enhance uncertainty modeling in safety-critical fields and promote the application of deep learning in these areas.
 \end{abstract*}
 
 % 符号表
@@ -296,10 +304,13 @@ In conclusion, this paper introduces two methods to improve the effectiveness of
 %   \end{notation}
 % 可选参数与 LaTeX 标准表格的列格式说明语法一致
 % 这里的 “ll” 表示两列均为自动宽度，并且左对齐
-\begin{notation}[ll]
-  $D$                  & 数据集        \\
+% \begin{notation}[ll]
+%   $D$                  & 数据集        \\
+%   $x$        & 输入 \\
+%   $z$         & 高维特征
+  
 
-\end{notation}
+% \end{notation}
 
 % 主体部分是论文的核心
 \mainmatter
@@ -318,12 +329,12 @@ In conclusion, this paper introduces two methods to improve the effectiveness of
 
 
 % 附录部分
-\appendix
-一些额外实验
+% \appendix
+% 一些额外实验
 
 
-\chapter{公式推导}
-一些公式
+% \chapter{公式推导}
+% 一些公式
 
 
 % 后置部分包含参考文献、声明页（自动生成）等
@@ -333,7 +344,13 @@ In conclusion, this paper introduces two methods to improve the effectiveness of
 \printbibliography
 
 \begin{acknowledgements}
-  致谢内容
+本文前两章主要围绕不确定性的研究工作与理论展开讨论，分别从不确定性的建模方法、计算方法以及评估方法三个角度进行阐述。首先，介绍了几类主流的不确定性建模方法，包括贝叶斯神经网络、集成方法（Ensemble）、测试时数据增强（TTA）方法以及单一确定性神经网络，并详细对比了它们在优缺点、适用场景及计算复杂度上的异同。其次，探讨了分类与回归任务中不确定性计算的具体方式，例如基于Softmax输出的预测熵、MC Dropout的熵分解及贝叶斯推断方法的应用等。最后，指出由于标签信息的缺乏，模型的不确定性评估多依赖代理任务的表现，而非直接评估方法。整章通过细致分析总结了不确定性建模领域的重要研究进展与挑战，为后续工作奠定了理论基础。
+
+第三章在高维特征概率密度建模的基础上，提出了一种基于输入扰动的改进方法，用于提升模型不确定性量化的能力。研究发现，样本的不确定性与梯度空间的响应具有显著相关性。具体而言，OOD样本在梯度空间中的响应普遍较高，而训练集样本的响应相对较低。这一发现启发研究者通过输入扰动来增强特征分布的捕捉能力。通过将梯度信息与概率密度建模相结合，该方法不仅为神经网络不确定性量化提供了新的思路，也为实际应用中模型的可靠性提升奠定了基础。然而，仍需注意的是，输入扰动方法的效果在一定程度上依赖于超参数的选择以及具体的数据分布特性。因此，未来工作可以进一步探讨自适应的扰动生成机制，以实现更为通用且稳健的不确定性建模方法。此外，可以尝试将本章方法与其他先进技术相结合，进一步挖掘梯度空间与特征分布的潜在关联，为神经网络的解释性与鲁棒性研究提供更有力的支持。不同类型的扰动如何影响特征分布，以及扰动对模型学习过程的长期影响，这些问题仍待深入探讨。
+
+第四章主要研究了基于特征空间优化的神经网络不确定性建模方法，旨在提升分类性能和预测可靠性。通过引入度量学习技术和创新损失函数AuxLoss，优化了特征空间的类内紧密性和类间可分性，有效增强了模型在不同任务中的适应能力与鲁棒性。此外，通过结合PCA降维和高斯混合模型（GMM），解决了高维数据计算复杂性问题，实现了高效的不确定性量化。这些方法在MNIST和CIFAR-10等数据集上的实验验证表明，AuxLoss显著提升了模型的分类性能和特征分布质量，而PCA-GMM结合策略进一步提高了计算效率和预测稳定性。尽管如此，本研究在高维多模态数据、实时计算优化和理论机制深化等方面仍存在进一步探索的空间。未来工作可致力于设计更加自适应的损失函数，以应对复杂任务中的动态变化；在计算效率方面，可结合随机投影、稀疏建模或硬件加速技术，优化高维数据处理流程；此外，针对多模态场景，可以研究特征融合优化策略，从而提升模型在跨领域任务中的通用性与可靠性。同时，通过与输入扰动、对抗训练等方法的结合，进一步完善模型的不确定性建模体系。在理论方面，可基于信息论或概率分布理论，深入揭示特征空间优化与模型性能的内在联系。综上所述，本章研究为神经网络的不确定性建模和特征空间优化提供了有力支持，为后续研究和实际应用奠定了坚实基础。
+
+
 \end{acknowledgements}
 
 \end{document}
